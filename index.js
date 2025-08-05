@@ -43,6 +43,7 @@ async function run() {
     const sensorCollection = database.collection("sensorData"); // New collection
     const mixerCollection = database.collection("mixerState");
     const presetCollection = database.collection("presets");
+    const historyCollection = database.collection("history");
 
     // initiate mixer state from database 
     const mixerStateDoc = await mixerCollection.findOne({});
@@ -129,6 +130,44 @@ async function run() {
         res.status(500).json({ error: "Internal server error" });
       }
     });
+
+
+
+    // Save a history record when a preset is run
+app.post('/api/machine01/history', async (req, res) => {
+  try {
+    const { presetId, cropName, cropVariety, mixingTime } = req.body;
+
+    if (!presetId || !cropName || !mixingTime) {
+      return res.status(400).json({ error: "Invalid history data" });
+    }
+
+    const historyEntry = {
+      presetId,
+      cropName,
+      cropVariety,
+      mixingTime,
+      runAt: new Date()
+    };
+
+    const result = await historyCollection.insertOne(historyEntry);
+    res.status(201).json({ message: "History saved", id: result.insertedId });
+  } catch (error) {
+    console.error("❌ Error saving history:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get all history records (latest first)
+app.get('/api/machine01/history', async (req, res) => {
+  try {
+    const history = await historyCollection.find().sort({ runAt: -1 }).toArray();
+    res.json(history);
+  } catch (error) {
+    console.error("❌ Error fetching history:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 
