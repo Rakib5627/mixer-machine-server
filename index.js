@@ -35,7 +35,7 @@ let mixerState = "off";  // Default state
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     // console.log("✅ Successfully connected to MongoDB!");
 
     const database = client.db("RecipeDB");  // database name
