@@ -35,7 +35,7 @@ let mixerState = "off";  // Default state
 
 async function run() {
   try {
-    // await client.connect();
+    await client.connect();
     // console.log("✅ Successfully connected to MongoDB!");
 
     const database = client.db("RecipeDB");  // database name
@@ -47,7 +47,7 @@ async function run() {
 
     // initiate mixer state from database 
     const mixerStateDoc = await mixerCollection.findOne({});
-    let mixerState = mixerStateDoc ? mixerStateDoc.state : "off";  // Default to "off" if no data
+    mixerState = mixerStateDoc ? mixerStateDoc.state : "off";  // Default to "off" if no data
 
 
     // **GET all users**
